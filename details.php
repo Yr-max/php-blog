@@ -13,10 +13,6 @@ $stmt = $db->prepare("SELECT * FROM posts WHERE id=".$_GET['id']);
 $stmt->execute();
 $result = $stmt->fetchAll();
 
-// print("<pre>");
-// print_r($result);
-// exit();
-
 
  // submit for comments
 $author_id = $_SESSION['user_id'];
@@ -27,12 +23,24 @@ $commentStmt = $db->prepare("SELECT * FROM comments WHERE post_id=$post_id");
 $commentStmt->execute();
 $commentResult = $commentStmt->fetchAll();
 
+// print("<pre>");
+// print_r($commentResult);
+// exit();
 
-// To get name user name from users to show comments header
-$authorStmt = $db->prepare("SELECT * FROM users WHERE id=$author_id");
-$authorStmt->execute();
-$authorResult = $authorStmt->fetchAll();
+$authorResult = [];
+if ($commentResult) {
+  foreach ($commentResult as $key => $value) {
+    $author_id = $commentResult[$key]['author_id'];
 
+    // To get name user name from users to show comments header
+    $authorStmt = $db->prepare("SELECT * FROM users WHERE id=$author_id");
+    $authorStmt->execute();
+    $authorResult[] = $authorStmt->fetchAll();
+  }
+}
+
+// print("<pre>");
+// print_r($authorResult);
 
 if ($_POST) {
   $comments = $_POST['comments'];
@@ -100,14 +108,24 @@ if ($_POST) {
                 <hr>
                 <div class="card-footer card-comments">
                   <div class="card-comment">
-                    <div class="comment-text" style="margin-left: 0 !important;">
+                    <?php if ($commentResult) { 
+                      ?>
+                      <div class="comment-text" style="margin-left: 0 !important;">
+                        <?php foreach ($commentResult as $key => $value) { ?>
                       <span class="username">
-                        <h4><?php echo $authorResult[0]['name']; ?></h4>
-                        <span class="text-muted float-right"><?php echo $commentResult[0]['created_at']; ?></span>
+
+                        <h4><?php print_r($authorResult[$key][0]['name']); ?></h4>
+                        <span class="text-muted float-right"><?php echo $value['created_at']; ?></span>
                       </span><!-- /.username -->
-                      <?php echo $commentResult[0]['content']; ?>
+                      <?php echo $value['content']; ?><br><br>
+                      <?php
+                    }
+                      ?>
                     </div>
                     <!-- /.comment-text -->
+                    <?php 
+                      } 
+                    ?>
                   </div>
                   <!-- /.card-comment -->
                 </div>

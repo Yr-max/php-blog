@@ -64,7 +64,7 @@ if ($_POST)
 ?>
 
 <?php
-include('header.html');
+include('header.php');
 
 
 // To show update data from posts table
@@ -81,7 +81,7 @@ $result = $stmt->fetchAll();
       <div class="col-md-12">
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">Blogs Table</h3>
+            <h3 class="card-title">Blog Table</h3>
           </div>
           <!-- /.card-header -->
           <div class="card-body">

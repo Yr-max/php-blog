@@ -7,6 +7,17 @@ require 'config/config.php';
 if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'] )) {
   header('location: login.php');
 }// Control Login Session
+
+// offset function pagination
+if (!empty($_GET['page-no'])) {
+  $page_no = $_GET['page-no'];
+}else {
+  $page_no = 1;
+}
+
+$numOfrecord = 5;
+$offset = ($page_no -1) * $numOfrecord;
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -64,31 +75,59 @@ if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'] )) {
                   <!-- /.card-header -->
                   <div class="card-body">
                     <a href="details.php?id=<?php echo $value['id']; ?>">
-                    <img class="img-fluid pad" src="admin/images/<?php echo $value['image']; ?>" style="height: 200px !important;"></a>
+                      <img class="img-fluid pad" src="admin/images/<?php echo $value['image']; ?>" style="height: 200px !important;"></a>
+                    </div>
+                    <!-- /.card-body -->
                   </div>
-                  <!-- /.card-body -->
+                  <!-- /.card -->
                 </div>
-                <!-- /.card -->
-              </div>
-              <!-- /.col -->
-              <?php
-              $i++;
-            } 
-          }
-          ?>
-        </div>
-        <!-- /.row -->
-      </div><!-- /.container-fluid -->
-    </section>
-    <!-- /.content -->
+                <!-- /.col -->
+                <?php
+                $i++;
+              } 
+            }
+            ?>
+          </div>
+          <!-- /.row -->
+          <div class="row" style="float:right; margin-left: 0px;">
+          <nav aria-label="Page navigation example" style="float:right;">
+            <ul class="pagination">
+              <li class="page-item"><a class="page-link" href="?page-no=1">First</a></li>
+              <li class="page-item <?php if ($page_no <= 1) { echo 'disabled'; } ?>">
+                <a class="page-link" href="<?php if ($page_no <= 1) {
+                  echo '#';
+                }else {
+                  echo "?page-no".($page_no-1);
+                } ?>">Previous
+              </a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#"><?php echo $page_no; ?></a></li>
+            <li class="page-item <?php if ($page_no >= $total_pages) { echo 'disabled'; } ?>">
+              <a class="page-link" href="<?php 
+              if ($page_no >= $total_pages) {
+                echo '#';
+              } else {
+                echo "?page-no=" . ($page_no + 1);
+              }
+            ?>">
+            Next
+          </a>
+        </li>
+        <li class="page-item"><a class="page-link" href="?page-no=<?php echo $total_pages; ?>">Last</a></li>
+      </ul>
+    </nav>
+  </div><br><br>
+        </div><!-- /.container-fluid -->
+</section>
+<!-- /.content -->
 
-    <a id="back-to-top" href="#" class="btn btn-primary back-to-top" role="button" aria-label="Scroll to top">
-      <i class="fas fa-chevron-up"></i>
-    </a>
-  </div>
-  <!-- /.content-wrapper -->
+<a id="back-to-top" href="#" class="btn btn-primary back-to-top" role="button" aria-label="Scroll to top">
+  <i class="fas fa-chevron-up"></i>
+</a>
+</div>
+<!-- /.content-wrapper -->
 
-  <footer class="main-footer" style="margin-left: 0px;">
+<footer class="main-footer" style="margin-left: 0px;">
   <!-- To the right -->
   <div class="float-right d-none d-sm-inline">
     <a href="logout.php" type="button" class="btn btn-dark">Logout</a>
@@ -97,11 +136,11 @@ if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'] )) {
   <strong>Copyright &copy; 2020-2025 <a href="#">kosoemin</a>.</strong> All rights reserved.
 </footer>
 
-  <!-- Control Sidebar -->
-  <aside class="control-sidebar control-sidebar-dark">
-    <!-- Control sidebar content goes here -->
-  </aside>
-  <!-- /.control-sidebar -->
+<!-- Control Sidebar -->
+<aside class="control-sidebar control-sidebar-dark">
+  <!-- Control sidebar content goes here -->
+</aside>
+<!-- /.control-sidebar -->
 </div>
 <!-- ./wrapper -->
 

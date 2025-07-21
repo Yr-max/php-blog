@@ -21,25 +21,25 @@ $offset = ($page_no -1) * $numOfrecord;
 
 // for search function
 if (empty($_POST['search'])) {
-  // Display data from posts table 
-  $stmt = $db->prepare("SELECT * FROM posts ORDER BY id DESC");
+  // Display data from users table 
+  $stmt = $db->prepare("SELECT * FROM users ORDER BY id DESC");
   $stmt->execute();
   $rawResult = $stmt->fetchAll();
   $total_pages = ceil(count($rawResult) / $numOfrecord);
 
-  $stmt = $db->prepare("SELECT * FROM posts ORDER BY id DESC LIMIT $offset,$numOfrecord");
+  $stmt = $db->prepare("SELECT * FROM users ORDER BY id DESC LIMIT $offset,$numOfrecord");
   $stmt->execute();
   $result = $stmt->fetchAll();
 }else {
 
   $searchKey = $_POST['search'];
-  // Display data from posts table 
-  $stmt = $db->prepare("SELECT * FROM posts WHERE title LIKE '%$searchKey%' ORDER BY id DESC");
+  // Display data from user table 
+  $stmt = $db->prepare("SELECT * FROM users WHERE name LIKE '%$searchKey%' ORDER BY id DESC");
   $stmt->execute();
   $rawResult = $stmt->fetchAll();
   $total_pages = ceil(count($rawResult) / $numOfrecord);
 
-  $stmt = $db->prepare("SELECT * FROM posts WHERE title LIKE '%$searchKey%' ORDER BY id DESC LIMIT $offset,$numOfrecord");
+  $stmt = $db->prepare("SELECT * FROM users WHERE name LIKE '%$searchKey%' ORDER BY id DESC LIMIT $offset,$numOfrecord");
   $stmt->execute();
   $result = $stmt->fetchAll();
 }
@@ -57,19 +57,20 @@ include('header.php');
       <div class="col-md-12">
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">Blogs Table</h3>
+            <h3 class="card-title">Users Table</h3>
           </div>
           <!-- /.card-header -->
             <div class="card-body">
               <div>
-                <a href="add.php" type="button" class="btn btn-success">Create New Blog</a>
+                <a href="user_add.php" type="button" class="btn btn-success">Create New Users</a>
               </div><br>
               <table class="table table-bordered">
                 <thead>                  
                   <tr>
                     <th style="width: 10px">#</th>
-                    <th>Blogs Title</th>
-                    <th>Content</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
                     <th style="width: 50px">Actions</th>
                   </tr>
                 </thead>
@@ -83,15 +84,18 @@ include('header.php');
                     ?>
                     <tr>
                       <td><?php echo $i; ?></td>
-                      <td><?php echo $value['title'] ?></td>
-                      <td><?php echo substr($value['content'], 0,100) ?></td>
+                      <td><?php echo $value['name']; ?></td>
+                      <td><?php echo $value['email']; ?></td>
+                      <td><?php if ($value['role'] == 1) {
+                        echo 'Admin';
+                      }else { echo 'User'; } ?></td>
                       <td>
                         <div class="btn-group">
                           <div class="container">
-                            <a href="edit.php?id=<?php echo $value['id'] ?>" type="button" class="btn btn-secondary">Edit</a>
+                            <a href="user_edit.php?id=<?php echo $value['id']; ?>" type="button" class="btn btn-secondary">Edit</a>
                           </div>
                           <div class="container">
-                            <a href="delete.php?id=<?php echo $value['id'] ?>" 
+                            <a href="user_delete.php?id=<?php echo $value['id'] ?>" 
                               onclick="return confirm('Are you sure you want to delete this item?');"
                               type="button" class="btn btn-danger">Delete</a>
                             </div>
