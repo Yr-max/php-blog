@@ -15,8 +15,34 @@ if (!empty($_GET['page-no'])) {
   $page_no = 1;
 }
 
-$numOfrecord = 5;
+$numOfrecord = 4;
 $offset = ($page_no -1) * $numOfrecord;
+
+// for search function
+if (empty($_POST['search'])) {
+  // Display data from posts table 
+  $stmt = $db->prepare("SELECT * FROM posts ORDER BY id DESC");
+  $stmt->execute();
+  $rawResult = $stmt->fetchAll();
+  $total_pages = ceil(count($rawResult) / $numOfrecord);
+
+  $stmt = $db->prepare("SELECT * FROM posts ORDER BY id DESC LIMIT $offset,$numOfrecord");
+  $stmt->execute();
+  $result = $stmt->fetchAll();
+}else {
+
+  $searchKey = $_POST['search'];
+  // Display data from posts table 
+  $stmt = $db->prepare("SELECT * FROM posts WHERE title LIKE '%$searchKey%' ORDER BY id DESC");
+  $stmt->execute();
+  $rawResult = $stmt->fetchAll();
+  $total_pages = ceil(count($rawResult) / $numOfrecord);
+
+  $stmt = $db->prepare("SELECT * FROM posts WHERE title LIKE '%$searchKey%' ORDER BY id DESC LIMIT $offset,$numOfrecord");
+  $stmt->execute();
+  $result = $stmt->fetchAll();
+}
+
 
 ?>
 <!DOCTYPE html>
@@ -48,10 +74,10 @@ $offset = ($page_no -1) * $numOfrecord;
       </div><!-- /.container-fluid -->
     </section>
     <?php
-       // Display data from posts table 
-    $stmt = $db->prepare("SELECT * FROM posts ORDER BY id DESC");
-    $stmt->execute();
-    $result = $stmt->fetchAll();
+    //    // Display data from posts table 
+    // $stmt = $db->prepare("SELECT * FROM posts ORDER BY id DESC");
+    // $stmt->execute();
+    // $result = $stmt->fetchAll();
     ?>
     <!-- Main content -->
     <section class="content">
@@ -63,7 +89,7 @@ $offset = ($page_no -1) * $numOfrecord;
             $i = 1;
             foreach ($result as $value) {
               ?>
-              <div class="col-md-4">
+              <div class="col-md-6">
                 <!-- Box Comment -->
                 <div class="card card-widget">
                   <div class="card-header">
