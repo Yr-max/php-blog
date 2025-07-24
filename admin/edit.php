@@ -16,7 +16,16 @@ if ($_SESSION['role'] != 1) {
 
 if ($_POST) 
 {
-  $id = $_POST['id'];
+  if (empty($_POST['title']) || empty($_POST['content'])) {
+    
+    if (empty($_POST['title'])) {
+      $titleError = 'Title field is require';
+    }
+    if (empty($_POST['content'])) {
+      $contentError = 'Content field is require';
+    }
+  }else {
+    $id = $_POST['id'];
   $title = $_POST['title'];
   $content = $_POST['content'];
 
@@ -62,7 +71,9 @@ if ($_POST)
                 window.location.href = 'index.php';
               </script>";
       }
+    }
   }
+ 
 }
 
 ?>
@@ -93,10 +104,12 @@ $result = $stmt->fetchAll();
               <div class="form-group">
                 <input type="hidden" name="id" value="<?php echo $result[0]['id']; ?>">
                 <label>Title</label>
-                <input class="form-control" type="text" name="title" value="<?php echo $result[0]['title']; ?>" required>
+                <p style="color: red;"><?php echo empty($titleError) ? '' : '*'.$titleError; ?></p>
+                <input class="form-control" type="text" name="title" value="<?php echo $result[0]['title']; ?>">
               </div>
               <div class="form-group">
                 <label>Content</label>
+                <p style="color: red;"><?php echo empty($contentError) ? '' : '*'.$contentError; ?></p>
                 <textarea class="form-control" name="content" rows="4" cols="50"><?php echo $result[0]['content']; ?></textarea>
               </div><br>
               <div class="form-group">

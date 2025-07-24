@@ -17,32 +17,49 @@ if ($_SESSION['role'] != 1) {
 // add new user/admin 
 if ($_POST) 
 {
-  $name = $_POST['name'];
-  $email = $_POST['email'];
-  $password = $_POST['password'];
-  $role = empty($_POST['role']) ? 0 : 1;
- 
-  // Check for existing user
-  $stmt = $db->prepare("SELECT * FROM users WHERE email = :email");
-  $stmt->bindValue(':email', $email);
-  $stmt->execute();
-  $user = $stmt->fetch(PDO::FETCH_ASSOC); // ✅ fixed typo (PDO not POD)
-
-  if ($user) {
-    echo "<script>
-    alert('This email is already used');
-    </script>";
+  if (empty($_POST['name']) || empty($_POST['email']) || empty($_POST['password']) || strlen($_POST['password']) < 4) {
+    
+    if (empty($_POST['name'])) {
+      $nameError = 'Name field is require';
+    }
+    if (empty($_POST['email'])) {
+      $emailError = 'Email field is require';
+    }
+    if (empty($_POST['password'])) {
+      $passwordError = 'Password field is require';
+    }
+    if(strlen($_POST['password']) < 4) {
+      $passwordError = 'Password should be 4 character at least.';
+    }
   }else {
-        // insert get_data into users table 
-    $stmt = $db->prepare("INSERT INTO users (name,email,password,role) VALUES (:name,:email,:password,:role)");
-    $result = $stmt->execute(
-      array(':name' =>$name,':email' =>$email,':password' =>$password,':role' =>$role)
-    );
-    if ($result) {
+
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    $role = empty($_POST['role']) ? 0 : 1;
+   
+    // Check for existing user
+    $stmt = $db->prepare("SELECT * FROM users WHERE email = :email");
+    $stmt->bindValue(':email', $email);
+    $stmt->execute();
+    $user = $stmt->fetch(PDO::FETCH_ASSOC); // ✅ fixed typo (PDO not POD)
+
+    if ($user) {
       echo "<script>
-      alert('New user is successfully added');
-      window.location.href = 'user_list.php';
+      alert('This email is already used');
       </script>";
+    }else {
+          // insert get_data into users table 
+      $stmt = $db->prepare("INSERT INTO users (name,email,password,role) VALUES (:name,:email,:password,:role)");
+      $result = $stmt->execute(
+        array(':name' =>$name,':email' =>$email,':password' =>$password,':role' =>$role)
+      );
+      if ($result) {
+        echo "<script>
+        alert('New user is successfully added');
+        window.location.href = 'user_list.php';
+        </script>";
+      }
     }
   }
 }
@@ -67,15 +84,18 @@ include('header.php');
             <form action="" method="post" enctype="multipart/form-data">
               <div class="form-group">
                 <label>Name</label>
-                <input class="form-control" type="text" name="name" required>
+                <p style="color: red;"><?php echo empty($nameError) ? '' : '*'.$nameError; ?></p>
+                <input class="form-control" type="text" name="name" >
               </div>
               <div class="form-group">
                 <label>Email</label>
-                <input class="form-control" type="email" name="email" required>
+                <p style="color: red;"><?php echo empty($emailError) ? '' : '*'.$emailError; ?></p>
+                <input class="form-control" type="email" name="email" >
               </div>
               <div class="form-group">
                 <label>Password</label>
-                <input class="form-control" type="text" name="password" required>
+                <p style="color: red;"><?php echo empty($passwordError) ? '' : '*'.$passwordError; ?></p>
+                <input class="form-control" type="text" name="password" >
               </div>
               <div class="form-group">
                 <label for="vehicle3">Role</label><br>

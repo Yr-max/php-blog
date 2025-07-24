@@ -23,6 +23,19 @@ $result = $stmt->fetchAll();
 // get type of image from uplode
 if ($_POST) 
 {
+  if (empty($_POST['title']) || empty($_POST['content']) || empty($_FILES['image'])) {
+    
+    if (empty($_POST['title'])) {
+      $titleError = 'Title field is require';
+    }
+    if (empty($_POST['content'])) {
+      $contentError = 'Content field is require';
+    }
+    if (empty($_FILES['image'])) {
+      $imageError = 'Image field is require';
+    }
+  }else {
+
   $file = 'images/'.($_FILES['image']['name']);
   $imageType = pathinfo($file,PATHINFO_EXTENSION);
 
@@ -51,6 +64,7 @@ if ($_POST)
               </script>";
     }
   }
+  }
 }
 
 ?>
@@ -73,15 +87,18 @@ if ($_POST)
             <form action="" method="post" enctype="multipart/form-data">
               <div class="form-group">
                 <label>Title</label>
-                <input class="form-control" type="text" name="title" required>
+                <p style="color: red;"><?php echo empty($titleError) ? '' : '*'.$titleError; ?></p>
+                <input class="form-control" type="text" name="title" >
               </div>
               <div class="form-group">
                 <label>Content</label>
+                <p style="color: red;"><?php echo empty($contentError) ? '' : '*'.$contentError; ?></p>
                 <textarea class="form-control" name="content" rows="4" cols="50"></textarea>
               </div>
               <div class="form-group">
                 <label>Image</label>
-                <input class="form-control" type="file" name="image" required>
+                <p style="color: red;"><?php echo empty($imageError) ? '' : '*'.$imageError; ?></p>
+                <input class="form-control" type="file" name="image">
               </div>
               <div class="form-group">
                 <input class="btn btn-success" type="submit" value="Create">

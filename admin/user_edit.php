@@ -15,35 +15,54 @@ if ($_SESSION['role'] != 1) {
 
 
 if ($_POST) {
-  $id = $_GET['id'];
-  $name = $_POST['name'];
-  $email = $_POST['email'];
-  $password = $_POST['password'];
-  $role = empty($_POST['role']) ? 0 : 1;
-
-  // Check for existing user
-  $stmt = $db->prepare("SELECT * FROM users WHERE email = :email AND id != :id");
-  $stmt->bindValue(':email', $email);
-  $stmt->bindValue(':id', $id);
-  $stmt->execute();
-  $user = $stmt->fetch(PDO::FETCH_ASSOC); // ✅ Corrected PDO usage
-
-  if ($user) {
-    echo "<script>alert('This email is already used');</script>";
-  }else {
-    // update get_data into user table 
-    $stmt = $db->prepare("UPDATE users SET name='$name', email='$email', password='$password', role='$role' WHERE id='$id'");
-    $result = $stmt->execute();
-
-    if ($result) 
-    {
-      echo "<script>
-      alert('User is  successfully updated');
-      window.location.href = 'user_list.php';
-      </script>";
+  if (empty($_POST['name']) || empty($_POST['email'])) {
+    
+    if (empty($_POST['name'])) {
+      $nameError = 'Name field is require';
     }
+    if (empty($_POST['email'])) {
+      $emailError = 'Email field is require';
+    }
+  }else if(!empty($_POST['password']) && strlen($_POST['password']) < 4) {
+      $passwordError = 'Password should be 4 character at least.';
   }
+  else {
 
+    $id = $_GET['id'];
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    $role = empty($_POST['role']) ? 0 : 1;
+
+    // Check for existing user
+    $stmt = $db->prepare("SELECT * FROM users WHERE email = :email AND id != :id");
+    $stmt->bindValue(':email', $email);
+    $stmt->bindValue(':id', $id);
+    $stmt->execute();
+    $user = $stmt->fetch(PDO::FETCH_ASSOC); // ✅ Corrected PDO usage
+
+    if ($user) {
+      echo "<script>alert('This email is already used');</script>";
+    }else {
+      // update get_data into user table 
+      if ($password != null) {
+          $stmt = $db->prepare("UPDATE users SET name='$name', email='$email', password='$password', role='$role' WHERE id='$id'");
+      }else {
+        $stmt = $db->prepare("UPDATE users SET name='$name', email='$email', role='$role' WHERE id='$id'");
+      }
+      $result = $stmt->execute();
+
+      if ($result) 
+      {
+        echo "<script>
+        alert('User is  successfully updated');
+        window.location.href = 'user_list.php';
+        </script>";
+      }
+    }
+
+  }
+  
 }
 
 
@@ -76,15 +95,19 @@ $result = $stmt->fetchAll();
               <div class="form-group">
                 <input type="hidden" name="id" value="<?php echo $result[0]['id']; ?>">
                 <label>Name</label>
-                <input class="form-control" type="text" name="name" value="<?php echo $result[0]['name']; ?>" required>
+                <p style="color: red;"><?php echo empty($nameError) ? '' : '*'.$nameError; ?></p>
+                <input class="form-control" type="text" name="name" value="<?php echo $result[0]['name']; ?>" >
               </div>
               <div class="form-group">
                 <label>Email</label>
-                <input class="form-control" type="email" name="email" value="<?php echo $result[0]['email']; ?>" required>
+                <p style="color: red;"><?php echo empty($emailError) ? '' : '*'.$emailError; ?></p>
+                <input class="form-control" type="email" name="email" value="<?php echo $result[0]['email']; ?>" >
               </div>
               <div class="form-group">
                 <label>Password</label>
-                <input class="form-control" type="text" name="password" value="<?php echo $result[0]['password']; ?>" required>
+                <p style="color: red;"><?php echo empty($passwordError) ? '' : '*'.$passwordError; ?></p>
+                <span style="font-size: 15px; color: blue;">This user already has a password</span>
+                <input class="form-control" type="text" name="password" value="<?php echo $result[0]['password']; ?>" >
               </div>
               <div class="form-group">
                 <label for="role">Role</label><br>

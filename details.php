@@ -43,9 +43,15 @@ if ($commentResult) {
 // print_r($authorResult);
 
 if ($_POST) {
-  $comments = $_POST['comments'];
-  
-  // insert get_data into posts table 
+  if (empty($_POST['comments'])) {
+    
+    if (empty($_POST['title'])) {
+      $commentError = 'Comments field is require';
+    }
+  }else {
+
+    $comments = $_POST['comments'];
+    // insert get_data into posts table 
     $stmt = $db->prepare("INSERT INTO comments (content,author_id,post_id) VALUES (:content,:author_id,:post_id)");
     $result = $stmt->execute(
       array(':content' =>$comments,':author_id' =>$author_id,':post_id' =>$post_id)
@@ -53,6 +59,8 @@ if ($_POST) {
     if ($result) {
       header('location: details.php?id='.$post_id);
     }
+  }
+  
 }
 
 
@@ -133,6 +141,7 @@ if ($_POST) {
                 <div class="card-footer">
                   <form action="" method="post">
                     <div class="img-push">
+                      <p style="color: red;"><?php echo empty($commentError) ? '' : '*'.$commentError; ?></p>
                       <input type="text" name="comments" class="form-control form-control-sm" placeholder="Press enter to post comment">
                     </div>
                   </form>
