@@ -2,6 +2,7 @@
 
 session_start();
 require "../config/config.php";
+require "../config/common.php";
 
 // Control Login Session
 if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'] )) 
@@ -82,6 +83,7 @@ include('header.php');
           <!-- /.card-header -->
           <div class="card-body">
             <form action="" method="post" enctype="multipart/form-data">
+              <input type="hidden" name="token" value="<?php echo $_SESSION['token']; ?>">
               <div class="form-group">
                 <label>Name</label>
                 <p style="color: red;"><?php echo empty($nameError) ? '' : '*'.$nameError; ?></p>

@@ -2,6 +2,7 @@
 
 session_start();
 require "../config/config.php";
+require "../config/common.php";
 
 // Control Login Session
 if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'] )) 
@@ -23,6 +24,7 @@ $result = $stmt->fetchAll();
 // get type of image from uplode
 if ($_POST) 
 {
+
   if (empty($_POST['title']) || empty($_POST['content']) || empty($_FILES['image'])) {
     
     if (empty($_POST['title'])) {
@@ -85,6 +87,7 @@ if ($_POST)
           <!-- /.card-header -->
           <div class="card-body">
             <form action="" method="post" enctype="multipart/form-data">
+              <input type="hidden" name="token" value="<?php echo $_SESSION['token']; ?>">
               <div class="form-group">
                 <label>Title</label>
                 <p style="color: red;"><?php echo empty($titleError) ? '' : '*'.$titleError; ?></p>

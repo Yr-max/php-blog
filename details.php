@@ -2,6 +2,7 @@
 
 session_start();
 require 'config/config.php';
+require "config/common.php";
 
 // Control for access  Login Session 
 if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'] )) {
@@ -140,6 +141,7 @@ if ($_POST) {
                 <!-- /.card-footer -->
                 <div class="card-footer">
                   <form action="" method="post">
+                    <input type="hidden" name="token" value="<?php echo $_SESSION['token']; ?>">
                     <div class="img-push">
                       <p style="color: red;"><?php echo empty($commentError) ? '' : '*'.$commentError; ?></p>
                       <input type="text" name="comments" class="form-control form-control-sm" placeholder="Press enter to post comment">
