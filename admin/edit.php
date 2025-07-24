@@ -107,12 +107,12 @@ $result = $stmt->fetchAll();
                 <input type="hidden" name="id" value="<?php echo $result[0]['id']; ?>">
                 <label>Title</label>
                 <p style="color: red;"><?php echo empty($titleError) ? '' : '*'.$titleError; ?></p>
-                <input class="form-control" type="text" name="title" value="<?php echo $result[0]['title']; ?>">
+                <input class="form-control" type="text" name="title" value="<?php echo escape($result[0]['title']); ?>">
               </div>
               <div class="form-group">
                 <label>Content</label>
                 <p style="color: red;"><?php echo empty($contentError) ? '' : '*'.$contentError; ?></p>
-                <textarea class="form-control" name="content" rows="4" cols="50"><?php echo $result[0]['content']; ?></textarea>
+                <textarea class="form-control" name="content" rows="4" cols="50"><?php echo escape($result[0]['content']); ?></textarea>
               </div><br>
               <div class="form-group">
                 <label>Image</label>

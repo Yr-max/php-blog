@@ -2,6 +2,7 @@
 
 session_start();
 require 'config/config.php';
+require "config/common.php";
 
 // Control for access  Login Session 
 if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'] )) {
@@ -94,7 +95,7 @@ if (empty($_POST['search'])) {
                 <div class="card card-widget">
                   <div class="card-header">
                     <div style="text-align: center; float: none;" class="card-title">
-                      <h3><?php echo $value['title']; ?></h3>
+                      <h3><?php echo escape($value['title']); ?></h3>
                     </div>
                     <!-- /.user-block -->
                   </div>
