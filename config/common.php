@@ -1,6 +1,15 @@
 <?php
 
-// session_start();
+// CSRF protection for POST requests
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!isset($_POST['token']) || !hash_equals($_SESSION['token'], $_POST['token'])) {
+        echo "Invalid CSRF token.";
+        die();
+    } else {
+        unset($_SESSION['token']);
+    }
+}
+
 
 if (empty($_SESSION['token'])) {
 	if (function_exists('random_bytes')) {
@@ -10,16 +19,6 @@ if (empty($_SESSION['token'])) {
 	}else {
 		$_SESSION['token'] = bin2hex(openssl_random_pseudo_bytes(32));
 	}
-}
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	//csrf protection
-  if (!hash_equals($_SESSION['token'], $_POST['token'])) {
-  	echo "Invalid CSRF token.";
-  	die();
-  }else {
-  	unset($_SESSION['token']);
-  }
 }
 
 // Escapes HTML for outputs

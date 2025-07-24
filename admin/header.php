@@ -39,6 +39,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
       ?>
 
       <form class="form-inline ml-3" method="post" action="<?php echo $page == 'index.php' ? 'index.php':'user_list.php'; ?>">
+        <input type="hidden" name="token" value="<?php echo $_SESSION['token']; ?>">
         <div class="input-group input-group-sm">
           <input class="form-control form-control-navbar" name="search" type="search" placeholder="Search" aria-label="Search">
           <div class="input-group-append">
